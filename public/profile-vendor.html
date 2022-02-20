@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link href="css/bootstrap.min.css" rel="stylesheet">
+   <script src="js/jquery-1.8.2.min.js"></script>
+   <script src="js/bootstrap.min.js"></script>
+   <script>
+      function loadFile(ref) {
+         var image = document.getElementById('prev');
+         image.src = URL.createObjectURL(ref.files[0]);
+      }
+      function dofill(ref) {
+         //alert();
+            var selser = document.querySelector("#selservices");
+            var val = ref.selectedIndex;
+            if(selser.value.length==0)
+              {
+               selser.value += ref[val].value;
+              }
+            else{
+               selser.value += ","+ref[val].value; 
+            }
+      }
+   </script>
+   <script>
+      $(document).ready(function () {
+         $("#email").val(localStorage.getItem("user"));
+         $("#btnSearch").click(function () {
+         var uemail = $("#email").val();
+         var url = "/chk-user-in-table1?thisuser=" + uemail;
+         $.get(url, function (kuchBhiJsonAry1) {
+            //alert(JSON.stringify(kuchBhiJsonAry));
+            if (kuchBhiJsonAry1.length == 0)
+               alert("Invalid Id");
+            else {
+               //alert(JSON.stringify(kuchBhiJsonAry));
+               $("#name").val(kuchBhiJsonAry1[0].name);
+               $("#contact").val(kuchBhiJsonAry1[0].contact);
+               $("#firmname").val(kuchBhiJsonAry1[0].firmname);
+               $("#estd").val(kuchBhiJsonAry1[0].estd);
+               $("#firmadd").val(kuchBhiJsonAry1[0].firmadd);
+               $("#city").val(kuchBhiJsonAry1[0].city);
+               $("#aadhar").val(kuchBhiJsonAry1[0].adhrno);
+               $("#otherinfo").val(kuchBhiJsonAry1[0].otherinfo);
+               $("#selservices").val(kuchBhiJsonAry1[0].selser);
+               $("#prev").prop("src","/uploads/"+kuchBhiJsonAry1[0].ppic);
+               $("#jasoos").val(kuchBhiJsonAry1[0].ppic);
+            }
+         })
+      });
+   });
+   </script>
+</head>
+
+<body style="background-color:lightgoldenrodyellow;">
+   <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="jasoos" name="jasoos">
+      <div class="container">
+         <div class="row">
+            <div class="col-md-8 offset-md-2" style="background-color: bisque; border-radius: 10px 10px 10px 10px;margin-top: 30px;margin-bottom: 30px;">
+               <div class="row">
+                  <div class="col-md-12" style="margin-top: 10px;">
+                     <h2 style="font-family: Georgia, 'Times New Roman', Times, serif;"><b>
+                           <center>VENDOR PROFILE</center>
+                        </b></h2>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-8" style="margin-top: 10px;">
+                     Email ID<input type="text" class="form-control" name="email" id="email"
+                        placeholder="Enter your email id" aria-label="Email">
+                  </div>
+                  <div class="col-md-4" style="margin-top: 34px;">
+                     <input type="button" value="Search" id="btnSearch" class="btn btn-outline-secondary">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Name<input type="text" class="form-control" name="name" id="name" placeholder="Enter your name"
+                        aria-label="Name">
+                  </div>
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Contact Number<input type="text" class="form-control" name="contact" id="contact"
+                        placeholder="Enter your contact number" aria-label="Contact">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Firm Name (if yes)<input type="text" class="form-control" name="firmname" id="firmname"
+                        placeholder="Enter your firm name" aria-label="Firm Name">
+                  </div>
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Established/Started Working<input type="text" class="form-control" name="estd" id="estd"
+                        placeholder="Enter when you start working" aria-label="Estd">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-8" style="margin-top: 10px;">
+                     Firm Address<input type="text" class="form-control" name="firmadd" id="firmadd"
+                        placeholder="Enter your firm address" aria-label="Firm Address">
+                  </div>
+                  <div class="col-md-4" style="margin-top: 10px;">
+                     City<input type="text" class="form-control" name="city" id="city" placeholder="Enter your city name"
+                        aria-label="City">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-4" style="margin-top: 10px;">
+                     Aadhar Card No.<input type="text" class="form-control" name="aadhar" id="aadhar"
+                        placeholder="Enter your aadhar number" aria-label="Name">
+                  </div>
+                  <div class="col-md-4" style="margin-top: 10px;">
+                     Upload Id proof : <input type="file" name="ppic" id="ppic" onchange="loadFile(this);"
+                        class="bg-light form-control ms-1">
+                  </div>
+                  <div class="col-md-4" style="margin-top: 10px;">
+                     <img src="pics/4051934-middle.png" width="130px" height="130px" id="prev">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Services Available
+                     <select class="form-select" aria-label="Default select example" id="services"
+                        onchange="dofill(this);">
+                        <option selected>Open this select menu</option>
+                        <option value="Decorator">Decorator</option>
+                        <option value="Catering">Catering</option>
+                        <option value="Band">Band</option>
+                        <option value="Firecracker">Firecracker</option>
+                        <option value="Photographer">Photographer</option>
+                        <option value="Dj & Dance">Dj & Dance</option>
+                     </select>
+                  </div>
+                  <div class="col-md-6" style="margin-top: 10px;">
+                     Sel. Services<input type="text" class="form-control" name="selservices" id="selservices"
+                        placeholder="Selected Services" aria-label="Services">
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-4" style="margin-top: 10px;">
+                     Other Info
+                     <textarea rows="2" cols="95" name="otherinfo" id="otherinfo"></textarea>
+                  </div>
+               </div>
+               <div class="row" style="margin-top: 20px; margin-bottom: 15px;">
+                  <div class="col-md-12">
+                     <center>
+                        <input type="submit" value="Submit" formaction="/submit2" class="btn btn-outline-secondary">
+                        <input type="submit" value="Update" formaction="/update2" class="btn btn-outline-secondary">
+                     </center>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </form>
+</body>
+
+</html>

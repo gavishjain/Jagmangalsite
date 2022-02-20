@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="js/angular.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</head>
+<script>
+    var module = angular.module("kuchbhiModule", []);
+    module.controller("kuchController", function ($scope, $http) {
+
+        $scope.jsonArray = [];
+        $scope.doFetchAll = function () {
+
+            var ucity = $("#city").val();
+            var uservices = $("#services").val();
+            $http.get("/do-fetch-all?thiscity=" + ucity + "&thisservices=" + uservices).then(fxOkKuch, fxNotOkKuch);
+
+            function fxOkKuch(response) {
+                //alert(JSON.stringify(response.data));
+                $scope.jsonArray = response.data;
+            }
+
+            function fxNotOkKuch(response) {
+                alert(response.data);
+            }
+        }
+        //====================================
+
+
+
+        //======================================
+        $scope.jsonArray2 = [];
+        $scope.doShowcity = function () {
+            $http.get("/fetch-city").then(fxOkKuch, fxNotOkKuch);
+
+            function fxOkKuch(response) {
+                // alert(JSON.stringify(response.data));
+                $scope.jsonArray2 = response.data;
+            }
+
+            function fxNotOkKuch(response) {
+                alert(response.data);
+            }
+        }
+        $scope.jsonArray3 = [];
+        $scope.doShowser = function () {
+            $http.get("/fetch-selser").then(fxOkKuch, fxNotOkKuch);
+            function fxOkKuch(response) {
+                // alert(JSON.stringify(response.data));
+                $scope.jsonArraySer = response.data;
+                var all = "";
+                for (i = 0; i < $scope.jsonArraySer.length; i++) {
+                    all = all + $scope.jsonArraySer[i].selser + ",";
+                }
+                //console.log(all);
+                all = all.substr(0, all.length - 1);
+                var ary = all.split(",");
+                //console.log(ary);
+                var setSer = new Set(ary);
+                //console.log(setSer);
+                $scope.jsonArray3 = Array.from(setSer);//converted to array
+                //console.log($scope.jsonArray3)
+            }
+
+            function fxNotOkKuch(response) {
+                alert(response.data);
+            }
+        }
+        //=====================================
+        $scope.index;
+        $scope.showFullDetails = function (index) {
+            $scope.index = index;
+        }
+    })
+
+
+
+
+</script>
+
+<body style="background-color: lightgoldenrodyellow;" ng-app="kuchbhiModule" ng-controller="kuchController"
+    ng-init="doShowser();doShowcity()">
+    <form>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 offset-md-1"
+                    style="margin-top: 40px ;background-color: bisque;border-radius: 10px 10px 10px 10px;">
+                    <div class="row">
+                        <div class="col-md-6" style="margin-top: 30px;">
+                            <font style="font-family: Georgia, 'Times New Roman', Times, serif;font-size: 20px;">
+                                Selected City: </font><select class="form-select" aria-label="Default select example"
+                                id="city">
+                                <option selected>Open this select menu</option>
+                                <option ng-repeat="obj in jsonArray2">{{obj.city}}</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-6" style="margin-top: 30px;">
+                            <font style="font-family: Georgia, 'Times New Roman', Times, serif;font-size: 20px;">
+                                Selected Services: </font><select class="form-select"
+                                aria-label="Default select example" id="services">
+                                <option selected>Open this select menu</option>
+                                <option ng-repeat="obj in jsonArray3" value="{{obj}}">{{obj}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 offset-md-5" style="margin-top: 30px;">
+                            <input type="button" value="SHOW VENDOR" class="btn btn-outline-secondary"
+                                ng-click="doFetchAll();" style="margin-bottom: 20px;">
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-3" ng-repeat="obj in jsonArray">
+                                <div class="card" style="margin-bottom: 20px;">
+                                    <img src="uploads/{{obj.ppic}}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Email:{{obj.email}}</h5>
+                                        <p>Name : {{obj.name}}</p>
+                                        <p>Contact : {{obj.contact}}</p>
+                                        <p> City : {{obj.city}}</p>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#detailsModal"
+                                            class="btn btn-primary" ng-click="showFullDetails($index);">Details</a>
+                                        <div class="modal" tabindex="-1">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p><span>Email:</span> {{jsonArray[index].email}}</p>
+                                            <p> <span>Name:</span> {{jsonArray[index].name}}</p>
+                                            <p><span>Contact:</span> {{jsonArray[index].contact}}</p>
+                                            <p> <span>Firm Name:</span> {{jsonArray[index].firmname}}</p>
+                                            <p> <span>Firm Address:</span> {{jsonArray[index].firmadd}}</p>
+                                            <p> <span>City:</span> {{jsonArray[index].city}}</p>
+                                            <p> <span>Aadhar No.:</span> {{jsonArray[index].adhrno}}</p>
+                                            <p> <span>Other Info.:</span> {{jsonArray[index].otherinfo}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </form>
+
+</body>

@@ -18,7 +18,7 @@ app.get("/admin", function (req, res) {
 var fileup = require("express-fileupload");
 app.use(fileup());
 var dbConfig = {
-    host: "localhost",
+    host: "0.0.0.0",
     user: "root",
     password: "",
     database: "projectnodejs"
